@@ -1,0 +1,35 @@
+# ============================================================
+# CALIBRATION IMAGE CAPTURE (Checkerboard patterns)
+# ============================================================
+# Run these from any directory - they will save to the correct folder
+# Using subshells ( ) to preserve your current directory
+
+# Standard Camera - 640x480 (100 images, 2s intervals)
+( cd ~/Desktop/camera_calibration/standard_res2/calibration && export DISPLAY=:0 && nvgstcapture-1.0 -A -C 100 --capture-auto --capture-gap=2000 --image-res=2 )
+
+# Standard Camera - 1280x720 (100 images, 2s intervals)
+( cd ~/Desktop/camera_calibration/standard_res3/calibration && export DISPLAY=:0 && nvgstcapture-1.0 -A -C 100 --capture-auto --capture-gap=2000 --image-res=3 )
+
+# Wide Angle Camera - 640x480 (100 images, 2s intervals)
+( cd ~/Desktop/camera_calibration/wide_angle_res2/calibration && export DISPLAY=:0 && nvgstcapture-1.0 -A -C 100 --capture-auto --capture-gap=2000 --image-res=2 )
+
+# Wide Angle Camera - 1280x720 (100 images, 2s intervals)
+( cd ~/Desktop/camera_calibration/wide_angle_res3/calibration && export DISPLAY=:0 && nvgstcapture-1.0 -A -C 100 --capture-auto --capture-gap=2000 --image-res=3 )
+
+
+# ============================================================
+# TEST IMAGE CAPTURE (Aruco markers for verification)
+# ============================================================
+# Single image capture for testing calibration results
+
+# Standard Camera - 640x480 (1 test image)
+( cd ~/Desktop/camera_calibration/standard_res2/test_images && export DISPLAY=:0 && nvgstcapture-1.0 -A -C 1 --capture-auto --image-res=2 )
+
+# Standard Camera - 1280x720 (1 test image)
+( cd ~/Desktop/camera_calibration/standard_res3/test_images && export DISPLAY=:0 && nvgstcapture-1.0 -A -C 1 --capture-auto --image-res=3 )
+
+# Wide Angle Camera - 640x480 (1 test image)
+( cd ~/Desktop/camera_calibration/wide_angle_res2/test_images && export DISPLAY=:0 && nvgstcapture-1.0 -A -C 1 --capture-auto --image-res=2 )
+
+# Wide Angle Camera - 1280x720 (1 test image)
+( cd ~/Desktop/camera_calibration/wide_angle_res3/test_images && export DISPLAY=:0 && nvgstcapture-1.0 -A -C 1 --capture-auto --image-res=3 )

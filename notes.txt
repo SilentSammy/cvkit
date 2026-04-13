@@ -1,0 +1,17 @@
+VideoSource Features:
++ on_read for user input polling
++ source label
++ screenshots
++ recordings (fps)
++ recordings / screenshots name provider lambda (use label by default)
++ fix recording encoding
++ recording + screenshots auto generate path?
++ fix codec error
++ save intrinsics in file metadata, for auto-loading?
++ image folder playback
++ dynamic intrinsics in case of image folder
++ how to get fps and how should recordings handle bottlenecked callers. I think once recording has started at a given fps, a background thread should simply write the last_frame at that frequency.
++ test streaming with an intentionally bottlenecked caller. can background thread frame retrieval solve this? something less expensive like shrinking or flushing buffer?
++ dt
+- support single image
+- upload repo

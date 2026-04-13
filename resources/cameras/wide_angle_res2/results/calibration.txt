@@ -1,0 +1,29 @@
+# Camera Calibration Results
+# Image directory: C:\Users\SAMMY_LOQ\Desktop\Python\PuzzlebotComms\resources\cameras\wide_angle_res2\calibration
+# Valid patterns: 73
+# RMS error: 0.648020 pixels
+# Image size: 640 x 480
+# Checkerboard: 8x5 inner corners
+# Square size: 0.03 meters
+
+# Camera Matrix (K)
+K = np.array([
+    [393.1514309397538, 0.0, 309.4502735120877],
+    [0.0, 524.9419355222756, 249.18099033060435],
+    [0.0, 0.0, 1.0]
+])
+
+# Distortion Coefficients (k1, k2, p1, p2, k3)
+D = np.array([-0.3448126476412597, 0.14645325402582504, 0.00019545706158098254, 0.0004836593388972357, -0.03197768168376571])
+
+# Focal lengths
+fx = 393.15143094
+fy = 524.94193552
+
+# Principal point
+cx = 309.45027351
+cy = 249.18099033
+
+# Image dimensions
+width = 640
+height = 480
