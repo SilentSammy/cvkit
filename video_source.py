@@ -3,6 +3,10 @@ import threading
 import time
 import cv2
 import numpy as np
+try:
+    import user_input
+except ImportError:
+    user_input = None
 
 
 class CameraIntrinsics:
@@ -207,7 +211,7 @@ class VideoSource(ABC):
         self.last_dt = None
         self._last_read_timestamp = None
         self._auto_restart = auto_restart
-        self._on_read = on_read
+        self._on_read = on_read or controls
         # Set default name generators
         if screenshot_name is None:
             screenshot_name = lambda: f"screenshots/{self.name}_screenshot_{int(time.time())}.png" if self.name else f"screenshots/screenshot_{int(time.time())}.png"
@@ -235,7 +239,7 @@ class VideoSource(ABC):
             if prev_timestamp is not None:
                 self.last_dt = current_time - prev_timestamp
             if self._on_read:
-                self._on_read(self)
+                self._on_read(self, None)
             return False, None
         with self._lock:
             ret, frame = self._read()
@@ -247,7 +251,7 @@ class VideoSource(ABC):
             self._reconnect_thread = threading.Thread(target=self._reconnect_loop, daemon=True)
             self._reconnect_thread.start()
         if self._on_read:
-            self._on_read(self)
+            self._on_read(self, frame)
         return ret, frame
 
     def _get_dt(self, current_time: float, prev_timestamp: float | None) -> float | None:
@@ -594,6 +598,7 @@ class FileSource(VideoSource):
         
         # Intrinsics loaded from file
         self._retrieved_intrinsics: CameraIntrinsics | None = None
+        self._last_reported_frame_index: int | None = None
         
         super().__init__(source, **kwargs)
     
@@ -652,7 +657,6 @@ class FileSource(VideoSource):
 
     def _read(self) -> tuple[bool, object]:
         """Read current frame, with optional auto-advance based on play speed."""
-        self._prev_frame_index = int(self._frame_index)
         # Auto-advance based on elapsed time and play speed
         if self._play_speed != 0.0:
             current_time = time.time()
@@ -668,14 +672,21 @@ class FileSource(VideoSource):
         return self._get_current_frame()
 
     def _get_dt(self, current_time: float, prev_timestamp: float | None) -> float | None:
-        """Use frame-based dt when the frame index advanced, otherwise fall back to wall-clock."""
-        prev = getattr(self, '_prev_frame_index', int(self._frame_index))
-        frames_advanced = abs(int(self._frame_index) - prev)
-        if frames_advanced > 0:
+        """Use frame-based dt when the frame index changed since the last call, zero otherwise.
+        
+        Returns negative dt when playing in reverse to preserve directional information.
+        """
+        current_index = int(self._frame_index)
+        if self._last_reported_frame_index is None:
+            self._last_reported_frame_index = current_index
+            return None
+        frames_advanced = current_index - self._last_reported_frame_index
+        self._last_reported_frame_index = current_index
+        if frames_advanced != 0:
             fps = self._get(cv2.CAP_PROP_FPS)
             if fps > 0:
                 return frames_advanced / fps
-        return super()._get_dt(current_time, prev_timestamp)
+        return 0.0
 
     def _is_opened(self) -> bool:
         """Check if video file or image sequence is open."""
@@ -747,3 +758,31 @@ class FileSource(VideoSource):
         """Total number of frames in the video or image sequence."""
         return int(self._get(cv2.CAP_PROP_FRAME_COUNT))
 
+
+play_ctrls = {
+    'j': -1.0,
+    'k': 0.0,
+    'l': 1.0,
+}
+seek_ctrls = {
+    ',': -1,
+    '.': 1,
+}
+record_ctrls = ('t', 'r')
+
+def controls(source: VideoSource, frame=None):
+    if user_input is None:
+        return
+
+    for key, action in zip(record_ctrls, (source.screenshot, lambda: source.start_recording() if source._recorder is None else source.save_recording())):
+        if user_input.rising_edge(key):
+            action()
+
+    if isinstance(source, FileSource):
+        for key, speed in play_ctrls.items():
+            if user_input.rising_edge(key):
+                source.play(speed)
+
+        for key, delta in seek_ctrls.items():
+            if user_input.rising_edge(key):
+                source.seek(delta)

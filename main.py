@@ -1,55 +1,23 @@
 import cv2
 import numpy as np
-from video_source import VideoSource, CameraIntrinsics, CaptureSource, FileSource
+from video_source import VideoSource, CameraIntrinsics, CaptureSource, FileSource, controls
 
 if __name__ == "__main__":
     import time
-    import user_input
+
     dt = 0.0
-    
-    def controls(source: VideoSource):
+    def on_read(source: VideoSource, frame=None):
         global dt
-        if source.last_dt is not None:
-            dt = source.last_dt
-        # Press to take a screenshot
-        if user_input.rising_edge('t'):
-            source.screenshot()
-        
-        # Press to toggle recording
-        if user_input.rising_edge('r'):
-            if source._recorder is None:
-                source.start_recording()
-            else:
-                source.save_recording()
-        
-        # FileSource playback controls
-        if isinstance(source, FileSource):
-            if user_input.rising_edge('j'):
-                source.play(-1.0)  # Reverse
-            
-            if user_input.rising_edge('k'):
-                source.play(0.0)  # Stop
-            
-            if user_input.rising_edge('l'):
-                source.play(1.0)  # Play
-            
-            if user_input.rising_edge(','):
-                source.seek(-1)  # Seek backward 1 frame
-            
-            if user_input.rising_edge('.'):
-                source.seek(1)  # Seek forward 1 frame
+        dt = source.last_dt or dt
+        controls(source, frame)
 
-    # Open camera (index 0) with auto-restart on disconnect
-    # cap = CaptureSource(0, auto_restart=True, on_read=controls)
-    # Camera Matrix (K)
-
+    # Set up VideoSource
     # cap = CaptureSource(0,
-    # cap = CaptureSource(r"capybara.mp4",
-    cap = CaptureSource("http://192.168.137.2:4747/video",
-    # cap = FileSource(r"capybara.mp4",
+    # cap = CaptureSource("http://10.22.209.148:4747/video",
+    cap = FileSource(r"capybara.mp4", loop=False,
     # cap = FileSource(r"resources\cameras\wide_angle_res2\calibration/*.*",
         auto_restart=True,
-        on_read=controls,
+        on_read=on_read,
         intrinsics=CameraIntrinsics(
             K=np.array([[476.21413568, 0., 324.64535892], [0., 476.57490297, 242.01755433], [0., 0., 1.]], dtype=np.float32),
             # D=np.array([0.37628059, 0.8828322, -4.22102342, 5.72132593], dtype=np.float32),
@@ -58,7 +26,7 @@ if __name__ == "__main__":
         )
     )
 
-    # cap = cv2.VideoCapture("http://192.168.137.2:4747/video")
+    # cap = cv2.VideoCapture("http://10.22.209.148:4747/video")
 
     _last_t = None
     while True:

@@ -13,5 +13,6 @@ VideoSource Features:
 + how to get fps and how should recordings handle bottlenecked callers. I think once recording has started at a given fps, a background thread should simply write the last_frame at that frequency.
 + test streaming with an intentionally bottlenecked caller. can background thread frame retrieval solve this? something less expensive like shrinking or flushing buffer?
 + dt
-- support single image
-- upload repo
++ support single image
++ upload repo
++ default on_read
