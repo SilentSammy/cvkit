@@ -1,0 +1,16 @@
+# Core
+opencv-contrib-python>=4.8
+numpy>=1.24
+
+# Pose estimation visualization
+matplotlib
+
+# Marker board generation (marker_det.py image_to_pdf)
+reportlab
+Pillow
+
+# Camera intrinsics metadata storage in MP4 files (optional)
+mutagen
+
+# Gamepad/keyboard input (user_input.py, optional)
+inputs

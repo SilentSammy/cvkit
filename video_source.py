@@ -227,10 +227,18 @@ class VideoSource(ABC):
         self._reconnect_thread = None
         self._recording_thread = None
         self._recording_stop_event = threading.Event()
-        self._start(source)
+        self._started = False
+
+    def open(self):
+        """Open the source if it hasn't been started yet."""
+        if not self._started:
+            self._start(self._source)
+            self._started = True
 
     def read(self) -> tuple[bool, object]:
         """Return the next frame. Always fires on_read; last_frame holds the most recent valid frame."""
+        if not self._started:
+            self.open()
         current_time = time.time()
         prev_timestamp = self._last_read_timestamp
         self._last_read_timestamp = current_time

@@ -516,30 +516,19 @@ if __name__ == "__main__":
     import cv2
     from marker_det import global_detector, board_config_letter, ArucoDetector
     from video_source import CameraIntrinsics, CaptureSource, FileSource
-    # from sources import webcam, wide_angle_3
+    from sources import webcam, wide_angle_3
 
-    print(0)
-    cap = CaptureSource(0,
-    # cap = FileSource(r"resources\cameras\wide_angle_res3\test_images/*.*",
-        auto_restart=True,
-        # on_read=on_read,
-        intrinsics=CameraIntrinsics(
-            K=np.array([[735.09668766, 0., 308.18011975], [0., 735.62248422, 242.58646203], [0., 0., 1.]], dtype=np.float32),
-            D=np.array([0.15017654, -1.34648531, 0.00405315, -0.00410719, 2.41472656], dtype=np.float32),
-            # D=np.zeros(5),
-            size=(640, 480)
-        )
-    )
+    # cap = webcam
+    cap = wide_angle_3
     
-    print(1)
     # reference = global_board_config
     aruco = ArucoDetector(
         dictionary=cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50),
         marker_id=16,
         marker_size=0.1
     )
-    reference = aruco
     reference = board_config_letter
+    reference = aruco
 
     estimator = PoseEstimator(
         reference=reference,
@@ -554,8 +543,6 @@ if __name__ == "__main__":
         camera_at_origin=False,
     )
     
-    
-    print(2)
     while True:
         if cv2.waitKey(1) & 0xFF == 27:
             break
@@ -565,7 +552,6 @@ if __name__ == "__main__":
         if not ret:
             continue
         drawing_frame = frame.copy()
-        print(3)
 
         # Estimate pose
         res = estimator.get_pose(frame, drawing_frame=drawing_frame)
