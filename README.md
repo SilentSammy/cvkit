@@ -14,6 +14,35 @@ Python computer vision toolkit with enhanced video source handling.
   - Auto-reconnect for network streams
   - Delta time tracking for CV applications
 
+## Using as a Submodule
+
+**Add to a parent repo:**
+```bash
+git submodule add https://github.com/SilentSammy/cvkit.git cvkit
+git commit -m "add cvkit submodule"
+```
+
+**Clone a parent repo that includes this submodule:**
+```bash
+git clone --recurse-submodules <parent-repo-url>
+# or, if already cloned:
+git submodule update --init
+```
+
+**Pull latest changes into the submodule:**
+```bash
+git submodule update --remote cvkit
+git add cvkit
+git commit -m "update cvkit submodule"
+```
+
+**Install dependencies:**
+```bash
+pip install -r cvkit/requirements.txt
+```
+
+---
+
 ## Quick Start
 
 ```python

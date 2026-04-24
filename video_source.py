@@ -767,6 +767,43 @@ class FileSource(VideoSource):
         return int(self._get(cv2.CAP_PROP_FRAME_COUNT))
 
 
+class CallableSource(VideoSource):
+    """VideoSource backed by any callable that returns a frame.
+
+    The callable may return either:
+      - A numpy array (or None on failure)
+      - A (bool, numpy array) tuple — passed through directly
+
+    Example::
+
+        source = CallableSource(lambda: io_client.get_stream_data('cam'))
+    """
+
+    def _start(self, source):
+        self._callable = source
+
+    def _stop(self):
+        pass
+
+    def _read(self) -> tuple[bool, object]:
+        try:
+            result = self._callable()
+        except Exception:
+            return False, None
+        if isinstance(result, tuple) and len(result) == 2 and isinstance(result[0], bool):
+            return result
+        return (result is not None, result)
+
+    def _is_opened(self) -> bool:
+        return self._callable is not None
+
+    def _get(self, prop_id: int) -> float:
+        return 0.0
+
+    def _set(self, prop_id: int, value: float) -> bool:
+        return False
+
+
 play_ctrls = {
     'j': -1.0,
     'k': 0.0,
