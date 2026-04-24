@@ -18,7 +18,7 @@ Python computer vision toolkit with enhanced video source handling.
 
 **Add to a parent repo:**
 ```bash
-git submodule add https://github.com/SilentSammy/cvkit.git cvkit
+git submodule add https://github.com/SilentSammy/cvkit.git <local-folder>
 git commit -m "add cvkit submodule"
 ```
 
@@ -31,14 +31,14 @@ git submodule update --init
 
 **Pull latest changes into the submodule:**
 ```bash
-git submodule update --remote cvkit
-git add cvkit
+git submodule update --remote
+git add <local-folder>
 git commit -m "update cvkit submodule"
 ```
 
 **Install dependencies:**
 ```bash
-pip install -r cvkit/requirements.txt
+pip install -r <local-folder>/requirements.txt
 ```
 
 ---
