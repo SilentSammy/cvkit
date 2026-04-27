@@ -831,3 +831,12 @@ def controls(source: VideoSource, frame=None):
         for key, delta in seek_ctrls.items():
             if user_input.rising_edge(key):
                 source.seek(delta)
+
+def show_frame(name, img, scale=1):
+    show_frame.first_time = show_frame.first_time if hasattr(show_frame, 'first_time') else True
+    cv2.namedWindow(name, cv2.WINDOW_NORMAL)
+    cv2.setWindowProperty(name, cv2.WND_PROP_TOPMOST, 1)
+    if show_frame.first_time:
+        cv2.resizeWindow(name, int(img.shape[1]*scale), int(img.shape[0]*scale))
+        show_frame.first_time = False
+    cv2.imshow(name, img)
