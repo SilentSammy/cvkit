@@ -832,7 +832,7 @@ def controls(source: VideoSource, frame=None):
             if user_input.rising_edge(key):
                 source.seek(delta)
 
-def show_frame(name, img, scale=1):
+def show_frame(name, img, scale=1, wait_for_key=True):
     show_frame.first_time = show_frame.first_time if hasattr(show_frame, 'first_time') else True
     cv2.namedWindow(name, cv2.WINDOW_NORMAL)
     cv2.setWindowProperty(name, cv2.WND_PROP_TOPMOST, 1)
@@ -840,3 +840,5 @@ def show_frame(name, img, scale=1):
         cv2.resizeWindow(name, int(img.shape[1]*scale), int(img.shape[0]*scale))
         show_frame.first_time = False
     cv2.imshow(name, img)
+    if wait_for_key and cv2.waitKey(1) & 0xFF == 27:
+        raise KeyboardInterrupt
