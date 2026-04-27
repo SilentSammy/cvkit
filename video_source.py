@@ -661,6 +661,8 @@ class FileSource(VideoSource):
     
     def get_intrinsics(self) -> CameraIntrinsics | None:
         """Return intrinsics loaded from the current file, or fallback to provided intrinsics."""
+        if not self._started:
+            self.open()
         return self._retrieved_intrinsics or self._intrinsics
 
     def _read(self) -> tuple[bool, object]:
@@ -842,3 +844,9 @@ def show_frame(name, img, scale=1, wait_for_key=True):
     cv2.imshow(name, img)
     if wait_for_key and cv2.waitKey(1) & 0xFF == 27:
         raise KeyboardInterrupt
+
+if __name__ == "__main__":
+    print(CameraIntrinsics.from_file(r"recordings\recording_1777258304.mp4").K)
+    
+    cap = FileSource(r"recordings\recording_1777258304.mp4")
+    print(cap.get_intrinsics().K) # this fails

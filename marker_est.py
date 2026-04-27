@@ -519,12 +519,13 @@ if __name__ == "__main__":
     from sources import webcam, wide_angle_3
 
     # cap = webcam
-    cap = wide_angle_3
+    # cap = wide_angle_3
+    cap = FileSource(r"recordings\recording_1777258304.mp4")
     
     # reference = global_board_config
     aruco = ArucoDetector(
         dictionary=cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50),
-        marker_id=16,
+        marker_id=0,
         marker_size=0.1
     )
     reference = board_config_letter
@@ -532,8 +533,8 @@ if __name__ == "__main__":
 
     estimator = PoseEstimator(
         reference=reference,
-        K=cap._intrinsics.K,
-        D=cap._intrinsics.D
+        K=cap.get_intrinsics().K,
+        D=cap.get_intrinsics().D
     )
     
     plotter = PosePlotter3D(
